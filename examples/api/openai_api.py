@@ -51,8 +51,8 @@ app = FastAPI()
 # HuggingFace: https://huggingface.co/spaces/taa/ChatTTS_Speaker
 VOICE_MAP = {
     "default": "1528.pt",
-    "alloy": "1384.pt",
-    "echo": "2443.pt",
+    "alloy": "1397.pt",
+    "echo": "2155.pt",
 }
 
 # Allowed audio formats
@@ -175,7 +175,7 @@ async def generate_voice(request_data: Dict):
         "refine_text_only": False,
         "use_decoder": True,
         "audio_seed": 12345678,
-        # "text_seed": 87654321,  # Random seed for text processing, used to control text refinement
+        #"text_seed": 57689395,  # Random seed for text processing, used to control text refinement
         "do_text_normalization": True,  # Perform text normalization
         "do_homophone_replacement": True,  # Perform homophone replacement
     }
@@ -183,21 +183,21 @@ async def generate_voice(request_data: Dict):
     # Inference code parameters
     params_infer_code = app.state.chat.InferCodeParams(
         # prompt=f"[speed_{int(request.speed * 10)}]",  # Convert to format supported by ChatTTS
-        prompt="[speed_5]",
-        top_P=0.5,
-        top_K=10,
-        temperature=0.1,
+        prompt="[break_4]",
+        top_P=0.7,
+        top_K=20,
+        temperature=0.3,
         repetition_penalty=1.1,
         max_new_token=2048,
         min_new_token=0,
         show_tqdm=True,
         ensure_non_empty=True,
-        manual_seed=42,
+        manual_seed=None,
         spk_emb=spk_emb,
         spk_smp=None,
         txt_smp=None,
-        stream_batch=24,
-        stream_speed=12000,
+        stream_batch=96,
+        stream_speed=4800,
         pass_first_n_batches=2,
     )
 
@@ -217,7 +217,7 @@ async def generate_voice(request_data: Dict):
     except Exception as e:
         raise HTTPException(500, detail=f"Speech synthesis failed: {str(e)}")
 
-    def generate_wav_header(sample_rate=24000, bits_per_sample=16, channels=1):
+    def generate_wav_header(sample_rate=2400, bits_per_sample=16, channels=1):
         """Generate WAV file header (without data length)"""
         header = bytearray()
         header.extend(b"RIFF")
